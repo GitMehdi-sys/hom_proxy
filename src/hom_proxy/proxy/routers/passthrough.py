@@ -18,7 +18,7 @@ from fastapi import APIRouter, HTTPException, Request, Response, status
 
 router = APIRouter()
 
-from shared import config, devices, pending_requests
+from hom_proxy.proxy.shared import config, devices, pending_requests
 
 logger = logging.getLogger('hom_server')
 

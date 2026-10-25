@@ -34,15 +34,16 @@ import pickle
 import time
 import threading
 
-import restapi
+from hom_proxy.device import restapi
 
 global mqttc
 mqttc = None
 
 hostname = socket.gethostname().lower()
+logger = logging.getLogger(__name__)
 
 def on_log(mqttc, userdata, level, string):
-    if not 'PING' in string or args.verbose:
+    if not 'PING' in string or getattr(args, "verbose", False):
         logger.debug('on_log(): %s : %s %s' % (userdata, level, string))
 
 # NOTE(thatsdone): assuming to use MQTTv5
@@ -125,7 +126,8 @@ def handle_message(msg):
 
 
 
-if __name__ == "__main__":
+def main():
+    global mqttc, hostname, logger, args
     parser = argparse.ArgumentParser(description='hom_device.py')
     parser.add_argument('--debug', action='store_true')
     parser.add_argument('--hostname', default=None)
@@ -149,7 +151,7 @@ if __name__ == "__main__":
         level = "DEBUG" if args.debug else "INFO",
         format = '%(asctime)s.%(msecs)03d %(levelname)s: %(funcName)s: %(message)s',
         datefmt='%Y/%m/%d %H:%M:%S')
-    logger = logging.getLogger(__name__)
+
 
     if args.hostname:
         hostname = args.hostname
@@ -199,3 +201,7 @@ if __name__ == "__main__":
     rest_th.start()
 
     mqttc.loop_forever()
+
+
+if __name__ == "__main__":
+    main()

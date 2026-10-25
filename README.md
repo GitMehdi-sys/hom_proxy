@@ -65,7 +65,7 @@ not the IP address of the device.
 
 0. Prepare MQTT broker
 1. Install dependency packages
-   * `$ pip install -r requirements.txt`
+   * `$ pip install .` (installs the `hom-proxy` and `hom-device` commands)
 2. Start proxy server (in proxy directory)
    * `$ env MQTT_HOST=MQTT_HOST_IP uvicorn main:app [--debug] [--host HOST] [--port PORT]`
 3. Start device connector (in device directory) on your IoT devices

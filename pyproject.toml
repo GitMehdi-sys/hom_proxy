@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hom-proxy"
+version = "0.1.0"
+description = "A simple HTTP proxy over MQTT for IoT devices behind firewalls"
+readme = "README.md"
+license = { text = "Apache-2.0" }
+requires-python = ">=3.9"
+authors = [{ name = "Masanori Itoh", email = "masanori.itoh@gmail.com" }]
+dependencies = [
+    "paho-mqtt",
+    "requests",
+    "PyYAML",
+    "fastapi",
+    "uvicorn",
+]
+
+[project.scripts]
+hom-proxy  = "hom_proxy.proxy.main:cli"
+hom-device = "hom_proxy.device.hom_device:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

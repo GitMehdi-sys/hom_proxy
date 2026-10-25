@@ -22,8 +22,8 @@ import paho.mqtt.client as mqtt
 from fastapi import FastAPI, Request
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from routers import commands, passthrough
-from shared import config, devices, pending_requests
+from hom_proxy.proxy.routers import commands, passthrough
+from hom_proxy.proxy.shared import config, devices, pending_requests
 
 config['debug'] = False
 hom_debug = os.getenv('HOM_DEBUG')
@@ -51,8 +51,7 @@ async def lifespan(app: FastAPI):
     if not mqtt_host:
         mqtt_host = '192.168.0.1'
     config['mqtt_host'] = mqtt_host
-    mqtt_port  = os.getenv('MQTT_PORT', 1883)
-    config['mqtt_tls'] = mqtt_port
+    mqtt_port  = int(os.getenv('MQTT_PORT', 1883))
     mqtt_timeout = os.getenv('MQTT_TIMEOUT')
     if not mqtt_timeout:
         mqtt_timeout = 60
@@ -67,6 +66,7 @@ async def lifespan(app: FastAPI):
     config['mqtt_qos'] = mqtt_qos
     
     mqtt_tls = bool(os.getenv('MQTT_TLS', False))
+    config['mqtt_tls'] = mqtt_tls
     if mqtt_tls and mqtt_port == 1883:
         # set default mqtts port
         mqtt_port = 8883
@@ -189,3 +189,13 @@ def message(client, userdata, msg):
     pending_requests[response['request_id']]['status'] = response['status']
 
     pending_requests[response['request_id']]['event'].set()
+
+
+def cli():
+    import argparse
+    import uvicorn
+    parser = argparse.ArgumentParser(prog="hom-proxy")
+    parser.add_argument("--host", default="0.0.0.0")
+    parser.add_argument("--port", type=int, default=8080)
+    args = parser.parse_args()
+    uvicorn.run("hom_proxy.proxy.main:app", host=args.host, port=args.port)

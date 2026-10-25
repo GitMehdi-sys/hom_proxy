@@ -18,7 +18,7 @@ import requests
 from fastapi import APIRouter, Request
 from pydantic import BaseModel
 
-from shared import config, pending_requests
+from hom_proxy.proxy.shared import config, pending_requests
 
 router = APIRouter()
 
